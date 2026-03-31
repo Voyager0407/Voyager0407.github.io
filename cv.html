@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>简历 | 寻</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .cv-section { margin-bottom: 40px; }
+    .cv-section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 0.05em;
+    }
+    .cv-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px 24px;
+      margin-bottom: 20px;
+    }
+    .cv-date {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding-top: 2px;
+      white-space: nowrap;
+    }
+    .cv-content-title {
+      font-weight: 600;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
+    .cv-content-sub {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-bottom: 6px;
+    }
+    .cv-content-desc {
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .cv-tag {
+      display: inline-block;
+      background: rgba(123,47,190,0.1);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.78rem;
+      margin: 3px 3px 0 0;
+    }
+    .cv-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 36px;
+      transition: opacity 0.2s;
+    }
+    .cv-download:hover {
+      color: white;
+      opacity: 0.85;
+    }
+    @media (max-width: 600px) {
+      .cv-item { grid-template-columns: 1fr; gap: 4px; }
+    }
+  </style>
+  <script>
+    (function() {
+      const t = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="navbar-brand" href="index.html">寻</a>
+      <ul class="nav-links">
+        <li><a href="index.html">关于</a></li>
+        <li><a href="cv.html">简历</a></li>
+        <li><a href="projects.html">项目</a></li>
+        <li><a href="books.html">书架</a></li>
+        <li><a href="gallery.html">图片库</a></li>
+        <li><a href="music.html">音乐库</a></li>
+        <li><a href="notes.html">笔记</a></li>
+        <li><a href="blog.html">日志</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="nav-btn" id="search-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          搜索
+        </button>
+        <button class="nav-btn" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">简历</h1>
+      <p class="page-subtitle">Curriculum Vitae</p>
+    </div>
+
+    <!-- 下载按钮 -->
+    <a class="cv-download" href="assets/pdf/cv.pdf" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      下载 PDF 简历
+    </a>
+
+    <!-- 教育经历 -->
+    <div class="cv-section">
+      <div class="cv-section-title">教育经历</div>
+
+      <div class="cv-item">
+        <div class="cv-date">2023 — 至今</div>
+        <div>
+          <div class="cv-content-title">中国地质大学（武汉）</div>
+          <div class="cv-content-sub">本科 · 遥感科学与技术</div>
+          <div class="cv-content-desc">主修课程：遥感原理、地理信息系统、数字图像处理、Python 程序设计</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技能 -->
+    <div class="cv-section">
+      <div class="cv-section-title">技能</div>
+
+      <div class="cv-item">
+        <div class="cv-date">编程语言</div>
+        <div>
+          <span class="cv-tag">Python</span>
+          <span class="cv-tag">C++</span>
+          <span class="cv-tag">JavaScript</span>
+          <span class="cv-tag">HTML/CSS</span>
+        </div>
+      </div>
+
+      <div class="cv-item">
+        <div class="cv-date">工具</div>
+        <div>
+          <span class="cv-tag">ENVI</span>
+          <span class="cv-tag">ArcGIS</span>
+          <span class="cv-tag">Git</span>
+          <span class="cv-tag">VS Code</span>
+        </div>
+      </div>
+
+      <div class="cv-item">
+        <div class="cv-date">语言</div>
+        <div>
+          <span class="cv-tag">中文（母语）</span>
+          <span class="cv-tag">英文（读写）</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 项目经历 -->
+    <div class="cv-section">
+      <div class="cv-section-title">项目经历</div>
+
+      <div class="cv-item">
+        <div class="cv-date">2024</div>
+        <div>
+          <div class="cv-content-title">折线可视化系统</div>
+          <div class="cv-content-sub">个人项目 · C++ / EasyX</div>
+          <div class="cv-content-desc">
+            基于 Bresenham 直线算法实现的交互式折线可视化工具，支持手动输入数据和文件读取两种方式。
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 搜索弹窗 -->
+  <div id="search-overlay" class="search-overlay">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search-input" class="search-input" placeholder="输入以开始搜索..." autocomplete="off">
+      </div>
+      <div id="search-results" class="search-results"></div>
+      <div class="search-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> 导航</span>
+        <span><kbd>↩</kbd> 选择</span>
+        <span><kbd>esc</kbd> 关闭</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
