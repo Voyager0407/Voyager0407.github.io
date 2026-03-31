@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>书架 | 寻</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 24px;
+      margin-top: 8px;
+    }
+    .book-card {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .book-card:hover { transform: translateY(-4px); }
+    .book-cover {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.15);
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .book-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .book-title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+    .book-author {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .book-status {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin: 6px auto 0;
+      display: block;
+      text-align: center;
+      width: fit-content;
+    }
+    .status-read {
+      background: rgba(34,197,94,0.15);
+      color: #16a34a;
+    }
+    .status-reading {
+      background: rgba(123,47,190,0.12);
+      color: var(--accent);
+    }
+    .status-want {
+      background: rgba(234,179,8,0.15);
+      color: #b45309;
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .filter-tab {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      font-family: var(--font-ui);
+    }
+    .filter-tab:hover,
+    .filter-tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    /* 书籍详情弹窗 */
+    .book-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .book-modal.active { display: flex; }
+    .book-modal-content {
+      background: var(--bg);
+      border-radius: 14px;
+      padding: 32px;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 24px;
+    }
+    .book-modal-cover {
+      width: 120px;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.15);
+      background: var(--bg-secondary);
+    }
+    .book-modal-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .book-modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-family: var(--font-main);
+    }
+    .book-modal-author {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+    }
+    .book-modal-note {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text);
+      font-family: var(--font-main);
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+  </style>
+  <script>
+    (function() {
+      const t = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="navbar-brand" href="index.html">寻</a>
+      <ul class="nav-links">
+        <li><a href="index.html">关于</a></li>
+        <li><a href="cv.html">简历</a></li>
+        <li><a href="projects.html">项目</a></li>
+        <li><a href="books.html">书架</a></li>
+        <li><a href="gallery.html">图片库</a></li>
+        <li><a href="music.html">音乐库</a></li>
+        <li><a href="notes.html">笔记</a></li>
+        <li><a href="blog.html">日志</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="nav-btn" id="search-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          搜索
+        </button>
+        <button class="nav-btn" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">书架</h1>
+      <p class="page-subtitle">我读过的、正在读的、想读的书</p>
+    </div>
+
+    <div class="quote-block">
+      书是一件多么令人惊叹的东西。跨越千年，作者在你的脑海中清晰而无声地向你诉说。<br>
+      —— 卡尔·萨根，《宇宙》
+    </div>
+
+    <!-- 筛选 -->
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterBooks('all', this)">全部</button>
+      <button class="filter-tab" onclick="filterBooks('read', this)">已读</button>
+      <button class="filter-tab" onclick="filterBooks('reading', this)">在读</button>
+      <button class="filter-tab" onclick="filterBooks('want', this)">想读</button>
+    </div>
+
+    <!-- 书架网格 -->
+    <div class="books-grid" id="books-grid">
+    </div>
+  </main>
+
+  <!-- 书籍详情弹窗 -->
+  <div id="book-modal" class="book-modal">
+    <div class="book-modal-content">
+      <button class="modal-close" onclick="closeBookModal()">✕</button>
+      <div class="book-modal-cover" id="modal-cover"></div>
+      <div>
+        <div class="book-modal-title" id="modal-title"></div>
+        <div class="book-modal-author" id="modal-author"></div>
+        <div class="book-modal-note" id="modal-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 搜索弹窗 -->
+  <div id="search-overlay" class="search-overlay">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search-input" class="search-input" placeholder="输入以开始搜索..." autocomplete="off">
+      </div>
+      <div id="search-results" class="search-results"></div>
+      <div class="search-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> 导航</span>
+        <span><kbd>↩</kbd> 选择</span>
+        <span><kbd>esc</kbd> 关闭</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // 书目数据，自己添加
+    const books = [
+      {
+        title: '《宇宙》',
+        author: '卡尔·萨根',
+        cover: '',
+        emoji: '🌌',
+        status: 'read',
+        note: '萨根用诗一般的语言描述宇宙的宏大与人类的渺小，读来令人心潮澎湃。'
+      },
+      {
+        title: '《哈姆莱特》',
+        author: '威廉·莎士比亚',
+        cover: '',
+        emoji: '🎭',
+        status: 'read',
+        note: 'To be or not to be, that is the question.'
+      },
+      {
+        title: '《极简宇宙史》',
+        author: '克里斯托弗·加尔法德',
+        cover: '',
+        emoji: '⚛️',
+        status: 'reading',
+        note: '正在读，很有趣的科普读物。'
+      },
+      {
+        title: '《2001：太空漫游》',
+        author: '亚瑟·克拉克',
+        cover: '',
+        emoji: '🚀',
+        status: 'want',
+        note: '想读，经典科幻。'
+      },
+      {
+        title: '《同一个，另一个》',
+        author: '豪尔赫·路易斯·博尔赫斯',
+        cover: '',
+        emoji: '📖',
+        status: 'read',
+        note: '博尔赫斯的诗集，语言精炼而深邃。'
+      },
+    ];
+
+    const statusMap = {
+      read: { label: '已读', cls: 'status-read' },
+      reading: { label: '在读', cls: 'status-reading' },
+      want: { label: '想读', cls: 'status-want' },
+    };
+
+    function renderBooks(filter) {
+      const grid = document.getElementById('books-grid');
+      const filtered = filter === 'all' ? books : books.filter(b => b.status === filter);
+      grid.innerHTML = filtered.map((b, i) => `
+        <div class="book-card" onclick="openBookModal(${books.indexOf(b)})">
+          <div class="book-cover">
+            ${b.cover
+              ? `<img src="${b.cover}" alt="${b.title}" onerror="this.parentElement.innerHTML='${b.emoji}'">`
+              : b.emoji}
+          </div>
+          <div class="book-title">${b.title}</div>
+          <div class="book-author">${b.author}</div>
+          <span class="book-status ${statusMap[b.status].cls}">${statusMap[b.status].label}</span>
+        </div>
+      `).join('');
+    }
+
+    function filterBooks(status, btn) {
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderBooks(status);
+    }
+
+    function openBookModal(idx) {
+      const b = books[idx];
+      document.getElementById('modal-title').textContent = b.title;
+      document.getElementById('modal-author').textContent = b.author;
+      document.getElementById('modal-note').textContent = b.note;
+      const cover = document.getElementById('modal-cover');
+      cover.innerHTML = b.cover
+        ? `<img src="${b.cover}" alt="${b.title}">`
+        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:var(--bg-secondary);border-radius:6px;">${b.emoji}</div>`;
+      document.getElementById('book-modal').classList.add('active');
+    }
+
+    function closeBookModal() {
+      document.getElementById('book-modal').classList.remove('active');
+    }
+
+    document.getElementById('book-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('book-modal')) closeBookModal();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeBookModal();
+    });
+
+    renderBooks('all');
+  </script>
+</body>
+</html>
