@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片库 | 寻</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .slideshow-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 24px 0 32px;
+    }
+    .slideshow {
+      width: 100%;
+      max-width: 640px;
+      aspect-ratio: 4/3;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+    }
+    .slideshow img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+    .slideshow img.active { opacity: 1; }
+    .slideshow-empty {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .album-card {
+      cursor: pointer;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid var(--border);
+    }
+    .album-card:hover {
+      transform: scale(1.03);
+      box-shadow: var(--shadow);
+      border-color: var(--accent);
+    }
+    .album-cover {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+    .album-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .album-name {
+      text-align: center;
+      font-size: 0.82rem;
+      padding: 8px 6px;
+      color: var(--text);
+    }
+
+    .album-detail { display: none; }
+    .album-detail.active { display: block; }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.88rem;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 20px;
+      font-family: var(--font-ui);
+      transition: opacity 0.2s;
+    }
+    .back-btn:hover { opacity: 0.7; }
+    .album-detail-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .photo-grid img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      cursor: zoom-in;
+      border-radius: 5px;
+      transition: opacity 0.2s;
+    }
+    .photo-grid img:hover { opacity: 0.82; }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.93);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 4px;
+      cursor: default;
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 20px;
+      right: 28px;
+      color: white;
+      font-size: 1.6rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      opacity: 0.8;
+      line-height: 1;
+    }
+    .lightbox-close:hover { opacity: 1; }
+
+    @media (max-width: 600px) {
+      .album-grid { grid-template-columns: repeat(2, 1fr); }
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+  <script>
+    (function() {
+      const t = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="navbar-brand" href="index.html">寻</a>
+      <ul class="nav-links">
+        <li><a href="index.html">关于</a></li>
+        <li><a href="cv.html">简历</a></li>
+        <li><a href="projects.html">项目</a></li>
+        <li><a href="books.html">书架</a></li>
+        <li><a href="gallery.html">图片库</a></li>
+        <li><a href="music.html">音乐库</a></li>
+        <li><a href="notes.html">笔记</a></li>
+        <li><a href="blog.html">日志</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="nav-btn" id="search-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          搜索
+        </button>
+        <button class="nav-btn" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">图片库</h1>
+      <p class="page-subtitle">看见我的世界</p>
+    </div>
+
+    <div class="quote-block">看见我的世界。</div>
+
+    <!-- 幻灯片 -->
+    <div class="slideshow-wrap">
+      <div class="slideshow" id="slideshow">
+        <div class="slideshow-empty">上传图片后这里将自动播放</div>
+      </div>
+    </div>
+
+    <hr class="divider divider-purple">
+
+    <!-- 相册列表 -->
+    <div id="album-grid-view">
+      <div class="album-grid" id="album-grid"></div>
+    </div>
+
+    <!-- 相册详情 -->
+    <div id="album-detail-view" class="album-detail">
+      <button class="back-btn" onclick="closeAlbum()">← 返回相册</button>
+      <div class="album-detail-title" id="detail-title"></div>
+      <div class="photo-grid" id="photo-grid"></div>
+    </div>
+  </main>
+
+  <!-- 大图弹窗 -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+  </div>
+
+  <!-- 搜索弹窗 -->
+  <div id="search-overlay" class="search-overlay">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search-input" class="search-input" placeholder="输入以开始搜索..." autocomplete="off">
+      </div>
+      <div id="search-results" class="search-results"></div>
+      <div class="search-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> 导航</span>
+        <span><kbd>↩</kbd> 选择</span>
+        <span><kbd>esc</kbd> 关闭</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // ===== 相册数据，按以下格式添加 =====
+    const albums = [
+      {
+        name: '自然风光',
+        photos: [
+          'assets/img/gallery/nature/1.jpg',
+          'assets/img/gallery/nature/2.jpg',
+        ]
+      },
+      {
+        name: '城市记忆',
+        photos: [
+          'assets/img/gallery/city/1.jpg',
+        ]
+      },
+    ];
+    // =====================================
+
+    // 渲染相册列表
+    function renderAlbums() {
+      const grid = document.getElementById('album-grid');
+      if (albums.length === 0) {
+        grid.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;">暂无相册，请添加图片后更新</p>';
+        return;
+      }
+      grid.innerHTML = albums.map((album, i) => `
+        <div class="album-card" onclick="openAlbum(${i})">
+          <div class="album-cover">
+            ${album.photos.length > 0
+              ? `<img src="${album.photos[0]}" alt="${album.name}"
+                      onerror="this.parentElement.innerHTML='📷'">`
+              : '📷'}
+          </div>
+          <div class="album-name">${album.name}</div>
+        </div>
+      `).join('');
+    }
+
+    // 打开相册
+    function openAlbum(idx) {
+      const album = albums[idx];
+      document.getElementById('detail-title').textContent = album.name;
+      document.getElementById('photo-grid').innerHTML = album.photos.map(src => `
+        <img src="${src}" alt="" loading="lazy" onclick="openLightbox('${src}')">
+      `).join('');
+      document.getElementById('album-grid-view').style.display = 'none';
+      document.getElementById('album-detail-view').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeAlbum() {
+      document.getElementById('album-detail-view').classList.remove('active');
+      document.getElementById('album-grid-view').style.display = 'block';
+    }
+
+    // 大图弹窗
+    function openLightbox(src) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // 幻灯片（收集所有图片随机播放）
+    function initSlideshow() {
+      const all = albums.flatMap(a => a.photos);
+      const el = document.getElementById('slideshow');
+      if (all.length === 0) return;
+      el.innerHTML = '';
+      // 随机打乱
+      all.sort(() => Math.random() - 0.5);
+      all.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = '';
+        el.appendChild(img);
+      });
+      const imgs = el.querySelectorAll('img');
+      let cur = 0;
+      imgs[0].classList.add('active');
+      if (imgs.length > 1) {
+        setInterval(() => {
+          imgs[cur].classList.remove('active');
+          cur = (cur + 1) % imgs.length;
+          imgs[cur].classList.add('active');
+        }, 5000);
+      }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    renderAlbums();
+    initSlideshow();
+  </script>
+</body>
+</html>
