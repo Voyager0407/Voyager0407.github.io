@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日志 | 寻</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .blog-search-wrap {
+      margin-bottom: 28px;
+    }
+    .blog-search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 9px 16px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: var(--font-ui);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .blog-search-input:focus { border-color: var(--accent); }
+    .blog-search-input::placeholder { color: var(--text-muted); }
+
+    /* 列表视图 */
+    .blog-list { }
+    .blog-year-group { margin-bottom: 40px; }
+    .blog-year {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-item {
+      display: flex;
+      gap: 20px;
+      align-items: baseline;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .blog-item:last-child { border-bottom: none; }
+    .blog-item:hover .blog-item-title { color: var(--accent); }
+    .blog-item-date {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      width: 80px;
+    }
+    .blog-item-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      flex: 1;
+    }
+    .blog-item-tags {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .blog-tag {
+      background: rgba(123,47,190,0.1);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-size: 0.73rem;
+    }
+
+    /* 文章详情 */
+    .blog-detail { display: none; }
+    .blog-detail.active { display: block; }
+    .blog-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.88rem;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 28px;
+      font-family: var(--font-ui);
+      transition: opacity 0.2s;
+    }
+    .blog-back-btn:hover { opacity: 0.7; }
+    .blog-post-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: var(--font-main);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .blog-post-meta {
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .blog-post-body {
+      font-family: var(--font-main);
+      font-size: 1.02rem;
+      line-height: 2;
+      color: var(--text);
+    }
+    .blog-post-body h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 36px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-post-body h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 24px 0 10px;
+    }
+    .blog-post-body p { margin-bottom: 18px; }
+    .blog-post-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 4px 0 4px 20px;
+      margin: 24px 0;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .blog-post-body img {
+      border-radius: 8px;
+      margin: 16px 0;
+    }
+  </style>
+  <script>
+    (function() {
+      const t = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="navbar-brand" href="index.html">寻</a>
+      <ul class="nav-links">
+        <li><a href="index.html">关于</a></li>
+        <li><a href="cv.html">简历</a></li>
+        <li><a href="projects.html">项目</a></li>
+        <li><a href="books.html">书架</a></li>
+        <li><a href="gallery.html">图片库</a></li>
+        <li><a href="music.html">音乐库</a></li>
+        <li><a href="notes.html">笔记</a></li>
+        <li><a href="blog.html">日志</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="nav-btn" id="search-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          搜索
+        </button>
+        <button class="nav-btn" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">日志</h1>
+      <p class="page-subtitle">随想、记录与生活片段</p>
+    </div>
+
+    <!-- 列表视图 -->
+    <div id="blog-list-view">
+      <div class="blog-search-wrap">
+        <input class="blog-search-input"
+               id="blog-search"
+               type="text"
+               placeholder="🔍 搜索日志...">
+      </div>
+      <div id="blog-list"></div>
+    </div>
+
+    <!-- 文章详情 -->
+    <div id="blog-detail-view" class="blog-detail">
+      <button class="blog-back-btn" onclick="closeBlogPost()">← 返回日志</button>
+      <h1 class="blog-post-title" id="post-title"></h1>
+      <div class="blog-post-meta" id="post-meta"></div>
+      <div class="blog-post-body" id="post-body"></div>
+    </div>
+  </main>
+
+  <!-- 搜索弹窗 -->
+  <div id="search-overlay" class="search-overlay">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search-input" class="search-input" placeholder="输入以开始搜索..." autocomplete="off">
+      </div>
+      <div id="search-results" class="search-results"></div>
+      <div class="search-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> 导航</span>
+        <span><kbd>↩</kbd> 选择</span>
+        <span><kbd>esc</kbd> 关闭</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // ===== 日志数据，按格式添加 =====
+    const posts = [
+      {
+        id: 'start',
+        title: '开始',
+        date: '2026-03-29',
+        tags: ['生活'],
+        excerpt: '这是我的第一篇日志。',
+        content: `
+          <p>Es Muss Sein.</p>
+          <p>一切的开始，总是这么简单。</p>
+          <blockquote>
+            凡是值得做的事，都值得好好做。
+          </blockquote>
+          <p>这里是我记录生活、思考与成长的地方。</p>
+        `
+      },
+    ];
+    // =================================
+
+    function renderBlogList(query) {
+      const q = (query || '').toLowerCase();
+      const filtered = q
+        ? posts.filter(p => p.title.toLowerCase().includes(q) ||
+                            p.tags.some(t => t.toLowerCase().includes(q)))
+        : posts;
+
+      if (filtered.length === 0) {
+        document.getElementById('blog-list').innerHTML =
+          '<p style="color:var(--text-muted);padding:24px 0;">未找到相关日志</p>';
+        return;
+      }
+
+      // 按年份分组
+      const byYear = {};
+      filtered.forEach(p => {
+        const year = p.date.slice(0, 4);
+        if (!byYear[year]) byYear[year] = [];
+        byYear[year].push(p);
+      });
+
+      let html = '';
+      Object.keys(byYear).sort((a, b) => b - a).forEach(year => {
+        html += `<div class="blog-year-group">
+          <div class="blog-year">${year}</div>`;
+        byYear[year].forEach(p => {
+          const tagsHtml = p.tags.map(t => `<span class="blog-tag">${t}</span>`).join('');
+          html += `
+            <div class="blog-item" onclick="openBlogPost('${p.id}')">
+              <span class="blog-item-date">${p.date.slice(5)}</span>
+              <span class="blog-item-title">${p.title}</span>
+              <div class="blog-item-tags">${tagsHtml}</div>
+            </div>`;
+        });
+        html += '</div>';
+      });
+
+      document.getElementById('blog-list').innerHTML = html;
+    }
+
+    function openBlogPost(id) {
+      const post = posts.find(p => p.id === id);
+      if (!post) return;
+      document.getElementById('post-title').textContent = post.title;
+      const tagsHtml = post.tags.map(t => `<span class="blog-tag">${t}</span>`).join(' ');
+      document.getElementById('post-meta').innerHTML =
+        `<span>${post.date}</span><span>${tagsHtml}</span>`;
+      document.getElementById('post-body').innerHTML = post.content;
+      document.getElementById('blog-list-view').style.display = 'none';
+      document.getElementById('blog-detail-view').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeBlogPost() {
+      document.getElementById('blog-detail-view').classList.remove('active');
+      document.getElementById('blog-list-view').style.display = 'block';
+    }
+
+    document.getElementById('blog-search').addEventListener('input', function () {
+      renderBlogList(this.value);
+    });
+
+    renderBlogList();
+  </script>
+</body>
+</html>
