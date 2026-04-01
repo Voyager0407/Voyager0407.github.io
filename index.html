@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>寻 | 个人主页</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <script>
-    // 防止主题闪烁
     (function() {
       const t = localStorage.getItem('theme') ||
         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -18,10 +17,8 @@
 </head>
 <body>
 
-  <!-- 进度条 -->
   <div id="progress-bar"></div>
 
-  <!-- 导航栏 -->
   <nav class="navbar">
     <div class="navbar-inner">
       <a class="navbar-brand" href="index.html">寻</a>
@@ -47,38 +44,18 @@
     </div>
   </nav>
 
-  <!-- 主内容 -->
   <main class="page-wrapper">
     <div class="about-layout">
 
-      <!-- 左侧文字 -->
-      <div>
-        <h1 class="about-name"><span>寻</span></h1>
+      <!-- 左侧 -->
+      <div class="about-left">
+        <h1 class="about-name">寻</h1>
         <p class="about-subtitle">中国地质大学（武汉）· 遥感科学与技术</p>
-
-        <p class="about-bio">
-          Es Muss Sein.
-        </p>
-
-        <!-- 社交链接 -->
-        <div class="social-links">
-          <a class="social-link" href="https://github.com/Voyager0407" target="_blank">
-            <img src="https://github.com/favicon.ico" alt="GitHub">
-            GitHub
-          </a>
-          <a class="social-link" href="https://space.bilibili.com/640354517" target="_blank">
-            <img src="https://www.bilibili.com/favicon.ico" alt="B站">
-            哔哩哔哩
-          </a>
-          <a class="social-link" href="https://www.douban.com/people/183153205" target="_blank">
-            <img src="https://www.douban.com/favicon.ico" alt="豆瓣">
-            豆瓣
-          </a>
-        </div>
+        <p class="about-bio">Es Muss Sein.</p>
       </div>
 
       <!-- 右侧头像 -->
-      <div>
+      <div class="about-right">
         <img class="about-avatar"
              src="assets/img/avatar.jpg"
              alt="寻"
@@ -86,7 +63,32 @@
       </div>
 
     </div>
+
+    <!-- 社交链接（底部居中） -->
+    <div class="social-links-wrap">
+      <div class="social-links">
+        <a class="social-link" href="https://github.com/Voyager0407" target="_blank">
+          <img src="https://github.com/favicon.ico" alt="GitHub">
+          GitHub
+        </a>
+        <a class="social-link" href="https://space.bilibili.com/640354517" target="_blank">
+          <img src="https://www.bilibili.com/favicon.ico" alt="B站">
+          哔哩哔哩
+        </a>
+        <a class="social-link" href="https://www.douban.com/people/183153205" target="_blank">
+          <img src="https://www.douban.com/favicon.ico" alt="豆瓣">
+          豆瓣
+        </a>
+      </div>
+    </div>
   </main>
+
+  <!-- 页脚 -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      © 2026 寻 · 保留所有权利
+    </div>
+  </footer>
 
   <!-- 搜索弹窗 -->
   <div id="search-overlay" class="search-overlay">
