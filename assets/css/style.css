@@ -576,3 +576,19 @@ img {
   }
   .about-name { font-size: 2.8rem; }
 }
+
+/* ===========================
+   搜索框字体
+=========================== */
+.search-input,
+.search-item-title,
+.search-section-label,
+.search-footer,
+.search-footer kbd,
+.nav-btn {
+  font-family: 'Noto Serif SC', serif;
+}
+
+.search-input::placeholder {
+  font-family: 'Noto Serif SC', serif;
+}
