@@ -581,3 +581,81 @@ img {
 .search-input::placeholder {
   font-family: 'Noto Serif SC', serif;
 }
+
+/* ===========================
+   手机端汉堡菜单
+=========================== */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.nav-hamburger.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.nav-hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.nav-hamburger.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 999;
+  padding: 12px 0;
+}
+
+.mobile-nav.active {
+  display: block;
+}
+
+.mobile-nav a {
+  display: block;
+  padding: 12px 24px;
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.mobile-nav a:hover,
+.mobile-nav a.active {
+  color: var(--accent);
+  background: rgba(123,47,190,0.06);
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+}
+
+@media (min-width: 769px) {
+  .mobile-nav { display: none !important; }
+}
