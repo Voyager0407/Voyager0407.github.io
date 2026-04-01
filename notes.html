@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>笔记 | 寻</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .notes-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .notes-sidebar {
+      position: sticky;
+      top: 80px;
+    }
+    .notes-category {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      margin: 20px 0 8px;
+    }
+    .notes-category:first-child { margin-top: 0; }
+    .note-nav-item {
+      display: block;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: var(--font-ui);
+    }
+    .note-nav-item:hover,
+    .note-nav-item.active {
+      color: var(--accent);
+      background: rgba(123,47,190,0.08);
+    }
+
+    .notes-content { min-height: 400px; }
+    .note-detail { display: none; }
+    .note-detail.active { display: block; }
+    .note-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-family: var(--font-main);
+    }
+    .note-meta {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      margin-bottom: 28px;
+      display: flex;
+      gap: 16px;
+    }
+    .note-tag {
+      background: rgba(123,47,190,0.1);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-size: 0.76rem;
+    }
+    .note-body {
+      font-family: var(--font-main);
+      font-size: 1rem;
+      line-height: 1.95;
+      color: var(--text);
+    }
+    .note-body h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 28px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .note-body h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 20px 0 8px;
+    }
+    .note-body p { margin-bottom: 16px; }
+    .note-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 4px 0 4px 20px;
+      margin: 20px 0;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .note-body code {
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      font-family: 'Courier New', monospace;
+    }
+
+    .note-list-view { }
+    .note-list-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .note-list-item:hover .note-list-title { color: var(--accent); }
+    .note-list-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      transition: color 0.2s;
+    }
+    .note-list-excerpt {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 700px) {
+      .notes-layout { grid-template-columns: 1fr; }
+      .notes-sidebar { position: static; }
+    }
+  </style>
+  <script>
+    (function() {
+      const t = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="navbar-brand" href="index.html">寻</a>
+      <ul class="nav-links">
+        <li><a href="index.html">关于</a></li>
+        <li><a href="cv.html">简历</a></li>
+        <li><a href="projects.html">项目</a></li>
+        <li><a href="books.html">书架</a></li>
+        <li><a href="gallery.html">图片库</a></li>
+        <li><a href="music.html">音乐库</a></li>
+        <li><a href="notes.html">笔记</a></li>
+        <li><a href="blog.html">日志</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="nav-btn" id="search-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          搜索
+        </button>
+        <button class="nav-btn" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">笔记</h1>
+      <p class="page-subtitle">读书、学习与思考的记录</p>
+    </div>
+
+    <div class="notes-layout">
+      <!-- 侧边栏 -->
+      <div class="notes-sidebar" id="notes-sidebar"></div>
+
+      <!-- 内容区 -->
+      <div class="notes-content" id="notes-content"></div>
+    </div>
+  </main>
+
+  <!-- 搜索弹窗 -->
+  <div id="search-overlay" class="search-overlay">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search-input" class="search-input" placeholder="输入以开始搜索..." autocomplete="off">
+      </div>
+      <div id="search-results" class="search-results"></div>
+      <div class="search-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> 导航</span>
+        <span><kbd>↩</kbd> 选择</span>
+        <span><kbd>esc</kbd> 关闭</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // ===== 笔记数据，按格式添加 =====
+    const notes = [
+      {
+        id: 'cosmos',
+        category: '读书笔记',
+        title: '《宇宙》读书笔记',
+        date: '2024-03-01',
+        tags: ['天文', '科普'],
+        excerpt: '卡尔·萨根用诗意的语言带我们穿越宇宙...',
+        content: `
+          <h2>关于这本书</h2>
+          <p>卡尔·萨根的《宇宙》是一本令人叹为观止的科普著作。它不仅讲述了天文学的知识，更是一次对人类文明和宇宙意义的深刻思考。</p>
+
+          <blockquote>
+            我们是宇宙认识自身的一种方式。
+          </blockquote>
+
+          <h2>核心观点</h2>
+          <p>萨根认为，人类对宇宙的探索不仅仅是科学行为，更是一种哲学和精神的追求。我们从哪里来？我们是否孤独？这些问题驱动着人类不断仰望星空。</p>
+
+          <h2>个人感悟</h2>
+          <p>读完这本书，我对自己的渺小有了更深的理解，但同时也感受到了一种奇特的自豪——我们这些由星尘构成的生命，竟然能够理解宇宙的运行规律。</p>
+        `
+      },
+      {
+        id: 'linear-regression',
+        category: '学习笔记',
+        title: '线性回归模型原理',
+        date: '2024-02-15',
+        tags: ['机器学习', 'Python'],
+        excerpt: '线性回归是最基础的机器学习模型之一...',
+        content: `
+          <h2>什么是线性回归</h2>
+          <p>线性回归是一种用于预测连续数值的统计方法。它假设自变量和因变量之间存在线性关系。</p>
+
+          <h2>数学原理</h2>
+          <p>基本公式：<code>y = wx + b</code>，其中 w 是权重，b 是偏置。</p>
+          <p>通过最小化损失函数（均方误差）来求解最优参数。</p>
+
+          <h2>Python 实现</h2>
+          <p>使用 <code>sklearn</code> 库可以快速实现线性回归模型，也可以从零手写梯度下降算法。</p>
+        `
+      },
+    ];
+    // =================================
+
+    // 按分类分组
+    function groupByCategory(notes) {
+      const groups = {};
+      notes.forEach(n => {
+        if (!groups[n.category]) groups[n.category] = [];
+        groups[n.category].push(n);
+      });
+      return groups;
+    }
+
+    // 渲染侧边栏
+    function renderSidebar(activeId) {
+      const groups = groupByCategory(notes);
+      let html = '';
+      for (const [cat, items] of Object.entries(groups)) {
+        html += `<div class="notes-category">${cat}</div>`;
+        items.forEach(n => {
+          html += `
+            <button class="note-nav-item ${n.id === activeId ? 'active' : ''}"
+                    onclick="showNote('${n.id}')">
+              ${n.title}
+            </button>`;
+        });
+      }
+      document.getElementById('notes-sidebar').innerHTML = html;
+    }
+
+    // 显示笔记
+    function showNote(id) {
+      const note = notes.find(n => n.id === id);
+      if (!note) return;
+      const tagsHtml = note.tags.map(t => `<span class="note-tag">${t}</span>`).join(' ');
+      document.getElementById('notes-content').innerHTML = `
+        <div class="note-detail active">
+          <div class="note-title">${note.title}</div>
+          <div class="note-meta">
+            <span>${note.date}</span>
+            <span>${tagsHtml}</span>
+          </div>
+          <div class="note-body">${note.content}</div>
+        </div>
+      `;
+      renderSidebar(id);
+    }
+
+    // 初始化
+    if (notes.length > 0) {
+      renderSidebar(notes[0].id);
+      showNote(notes[0].id);
+    } else {
+      document.getElementById('notes-sidebar').innerHTML =
+        '<p style="color:var(--text-muted);font-size:0.88rem;">暂无笔记</p>';
+      document.getElementById('notes-content').innerHTML =
+        '<p style="color:var(--text-muted);">添加笔记后将在这里显示。</p>';
+    }
+  </script>
+</body>
+</html>
