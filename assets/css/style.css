@@ -96,7 +96,7 @@ img {
 }
 
 .navbar-brand {
-  font-family: 'Ma Shan Zheng', 'KaiTi', 'STKaiti', serif;
+  font-family: 'Noto Serif SC', serif;
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--text);
@@ -116,7 +116,7 @@ img {
 }
 
 .nav-links a {
-  font-family: 'Ma Shan Zheng', 'KaiTi', 'STKaiti', serif;
+  font-family: 'Noto Serif SC', serif;
   color: var(--text-muted);
   font-size: 0.88rem;
   padding: 5px 10px;
