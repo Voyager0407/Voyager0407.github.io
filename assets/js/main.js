@@ -58,7 +58,7 @@ const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
 const searchBtn = document.getElementById('search-btn');
 
-// 搜索数据（所有页面的导航条目）
+// 搜索数据
 const searchData = [
   { title: '关于', url: 'index.html', section: '导航' },
   { title: '简历', url: 'cv.html', section: '导航' },
@@ -68,6 +68,23 @@ const searchData = [
   { title: '音乐库', url: 'music.html', section: '导航' },
   { title: '笔记', url: 'notes.html', section: '导航' },
   { title: '日志', url: 'blog.html', section: '导航' },
+
+  // 书架
+  { title: '《宇宙》', url: 'books.html', section: '书架' },
+  { title: '《哈姆莱特》', url: 'books.html', section: '书架' },
+  { title: '《极简宇宙史》', url: 'books.html', section: '书架' },
+  { title: '《2001：太空漫游》', url: 'books.html', section: '书架' },
+  { title: '《同一个，另一个》', url: 'books.html', section: '书架' },
+
+  // 笔记
+  { title: '《宇宙》读书笔记', url: 'notes.html', section: '笔记' },
+  { title: '线性回归模型原理', url: 'notes.html', section: '笔记' },
+
+  // 日志
+  { title: '开始', url: 'blog.html', section: '日志' },
+
+  // 音乐
+  { title: 'Breaking the Habit', url: 'music.html', section: '音乐' },
 ];
 
 function openSearch() {
