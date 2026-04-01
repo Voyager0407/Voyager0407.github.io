@@ -174,3 +174,25 @@ if (searchInput) {
     }
   });
 }
+
+// ===========================
+// 手机端导航
+// ===========================
+function toggleMobileNav() {
+  const nav = document.getElementById('mobile-nav');
+  const btn = document.getElementById('nav-hamburger');
+  if (nav) nav.classList.toggle('active');
+  if (btn) btn.classList.toggle('active');
+}
+
+// 点击页面其他地方关闭菜单
+document.addEventListener('click', e => {
+  const nav = document.getElementById('mobile-nav');
+  const btn = document.getElementById('nav-hamburger');
+  if (nav && btn &&
+      !nav.contains(e.target) &&
+      !btn.contains(e.target)) {
+    nav.classList.remove('active');
+    btn.classList.remove('active');
+  }
+});
