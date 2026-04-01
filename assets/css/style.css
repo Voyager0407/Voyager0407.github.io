@@ -167,17 +167,6 @@ img {
   padding: 88px 24px 64px;
 }
 
-/* ===========================
-   首页 About
-=========================== */
-.about-layout {
-  display: grid;
-  grid-template-columns: 1fr 220px;
-  gap: 48px;
-  align-items: start;
-  margin-top: 16px;
-}
-
 .about-name {
   font-size: 2.4rem;
   font-weight: 700;
@@ -472,9 +461,8 @@ img {
   gap: 40px;
   align-items: start;
   min-height: 60vh;
-  padding-top: 24px;
+  padding-top: 80px;
 }
-
 .about-left {
   display: flex;
   flex-direction: column;
