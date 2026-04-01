@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音乐库 | 寻</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .music-search-wrap {
+      margin: 0 0 24px;
+    }
+    .music-search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 9px 16px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: var(--font-ui);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .music-search-input:focus {
+      border-color: var(--accent);
+    }
+    .music-search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .music-list { max-width: 700px; }
+    .music-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .music-item:hover { background: var(--bg-secondary); }
+    .music-item.playing {
+      background: rgba(123,47,190,0.08);
+    }
+    .music-item.hidden { display: none; }
+
+    .music-index {
+      width: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+    .music-cover {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    .music-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .music-info { flex: 1; min-width: 0; }
+    .music-title {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .music-artist {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .music-progress-wrap {
+      width: 100px;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .music-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.8s linear;
+    }
+    .music-duration {
+      width: 80px;
+      text-align: right;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .music-play-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: none;
+      cursor: pointer;
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+    .music-play-btn:hover,
+    .music-item.playing .music-play-btn {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .music-progress-wrap { display: none; }
+      .music-duration { width: 60px; }
+    }
+  </style>
+  <script>
+    (function() {
+      const t = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="navbar-brand" href="index.html">寻</a>
+      <ul class="nav-links">
+        <li><a href="index.html">关于</a></li>
+        <li><a href="cv.html">简历</a></li>
+        <li><a href="projects.html">项目</a></li>
+        <li><a href="books.html">书架</a></li>
+        <li><a href="gallery.html">图片库</a></li>
+        <li><a href="music.html">音乐库</a></li>
+        <li><a href="notes.html">笔记</a></li>
+        <li><a href="blog.html">日志</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="nav-btn" id="search-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          搜索
+        </button>
+        <button class="nav-btn" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">音乐库</h1>
+      <p class="page-subtitle">听见你的声音</p>
+    </div>
+
+    <div class="quote-block">听见你的声音。</div>
+
+    <!-- 搜索 -->
+    <div class="music-search-wrap">
+      <input class="music-search-input"
+             id="music-search"
+             type="text"
+             placeholder="🔍 搜索歌曲...">
+    </div>
+
+    <!-- 歌单 -->
+    <div class="music-list" id="music-list"></div>
+
+    <audio id="audio-player" preload="none"></audio>
+  </main>
+
+  <!-- 搜索弹窗 -->
+  <div id="search-overlay" class="search-overlay">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input id="search-input" class="search-input" placeholder="输入以开始搜索..." autocomplete="off">
+      </div>
+      <div id="search-results" class="search-results"></div>
+      <div class="search-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> 导航</span>
+        <span><kbd>↩</kbd> 选择</span>
+        <span><kbd>esc</kbd> 关闭</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // ===== 歌单数据，按格式添加 =====
+    const songs = [
+      {
+        title: 'Breaking the Habit',
+        artist: 'Linkin Park',
+        file: 'assets/music/breaking-the-habit.mp3',
+        cover: '',
+        emoji: '🎵',
+        duration: '3:16'
+      },
+      // 继续添加...
+    ];
+    // =================================
+
+    let curIdx = -1;
+    let isPlaying = false;
+    const audio = document.getElementById('audio-player');
+
+    function renderList() {
+      const list = document.getElementById('music-list');
+      list.innerHTML = songs.map((s, i) => `
+        <div class="music-item" id="item-${i}"
+             data-title="${s.title}"
+             onclick="togglePlay(${i})">
+          <span class="music-index">${i + 1}</span>
+          <div class="music-cover">
+            ${s.cover
+              ? `<img src="${s.cover}" alt="${s.title}" onerror="this.parentElement.innerHTML='${s.emoji}'">`
+              : s.emoji}
+          </div>
+          <div class="music-info">
+            <span class="music-title">${s.title}</span>
+            <span class="music-artist">${s.artist}</span>
+          </div>
+          <div class="music-progress-wrap">
+            <div class="music-progress-fill" id="prog-${i}"></div>
+          </div>
+          <span class="music-duration" id="dur-${i}">${s.duration}</span>
+          <button class="music-play-btn" id="btn-${i}">▶</button>
+        </div>
+      `).join('');
+    }
+
+    function togglePlay(idx) {
+      if (curIdx === idx) {
+        if (isPlaying) { audio.pause(); setBtn(idx, '▶'); isPlaying = false; }
+        else { audio.play(); setBtn(idx, '⏸'); isPlaying = true; }
+        return;
+      }
+      if (curIdx >= 0) resetItem(curIdx);
+      curIdx = idx;
+      audio.src = songs[idx].file;
+      audio.play();
+      isPlaying = true;
+      setBtn(idx, '⏸');
+      document.querySelectorAll('.music-item').forEach(el => el.classList.remove('playing'));
+      document.getElementById(`item-${idx}`).classList.add('playing');
+    }
+
+    function setBtn(idx, icon) {
+      const b = document.getElementById(`btn-${idx}`);
+      if (b) b.textContent = icon;
+    }
+
+    function resetItem(idx) {
+      setBtn(idx, '▶');
+      const p = document.getElementById(`prog-${idx}`);
+      if (p) p.style.width = '0%';
+      const d = document.getElementById(`dur-${idx}`);
+      if (d) d.textContent = songs[idx].duration;
+      document.getElementById(`item-${idx}`)?.classList.remove('playing');
+    }
+
+    function fmt(s) {
+      return Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+    }
+
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      const p = document.getElementById(`prog-${curIdx}`);
+      if (p) p.style.width = (audio.currentTime / audio.duration * 100) + '%';
+      const d = document.getElementById(`dur-${curIdx}`);
+      if (d) d.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+    });
+
+    audio.addEventListener('ended', () => {
+      resetItem(curIdx);
+      isPlaying = false;
+      if (curIdx < songs.length - 1) togglePlay(curIdx + 1);
+      else curIdx = -1;
+    });
+
+    document.getElementById('music-search').addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('.music-item').forEach(item => {
+        item.classList.toggle('hidden',
+          !item.dataset.title.toLowerCase().includes(q));
+      });
+    });
+
+    renderList();
+  </script>
+</body>
+</html>
