@@ -96,13 +96,13 @@ img {
 }
 
 .navbar-brand {
+  font-family: 'Noto Serif SC', serif;
   font-size: 1.15rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
   margin-right: 16px;
   letter-spacing: 0.02em;
 }
-
 .navbar-brand:hover {
   color: var(--accent);
 }
@@ -116,6 +116,7 @@ img {
 }
 
 .nav-links a {
+  font-family: 'Noto Serif SC', serif;
   color: var(--text-muted);
   font-size: 0.88rem;
   padding: 5px 10px;
@@ -519,8 +520,8 @@ img {
 }
 
 .about-avatar {
-  width: 220px;
-  height: 220px;
+  width: 280px;
+  height: 280px;
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--border);
