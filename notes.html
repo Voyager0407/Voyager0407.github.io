@@ -219,46 +219,58 @@
     // ===== 笔记数据，按格式添加 =====
     const notes = [
       {
-        id: 'cosmos',
-        category: '读书笔记',
-        title: '《宇宙》读书笔记',
-        date: '2024-03-01',
-        tags: ['天文', '科普'],
-        excerpt: '卡尔·萨根用诗意的语言带我们穿越宇宙...',
-        content: `
-          <h2>关于这本书</h2>
-          <p>卡尔·萨根的《宇宙》是一本令人叹为观止的科普著作。它不仅讲述了天文学的知识，更是一次对人类文明和宇宙意义的深刻思考。</p>
+  id: 'slam',
+  category: '技术笔记',
+  title: 'SLAM 技术选型分析报告',
+  date: '2025-01-01',
+  tags: ['机器人', 'SLAM', 'ROS2', '具身智能'],
+  excerpt: '对激光SLAM、视觉SLAM和多传感器融合SLAM三大技术路线的全面对比，推荐以LIO-SAM作为核心框架。',
+  content: `
+    <h2>一、执行摘要</h2>
+    <p>本报告系统梳理了当前主流SLAM（Simultaneous Localization and Mapping，即时定位与地图构建）技术，并结合具身机器人应用场景需求，对三大技术路线进行全面对比分析。</p>
+    <ul>
+      <li><strong>激光SLAM</strong>（LOAM、LeGO-LOAM、LIO-SAM）：精度高、鲁棒性强，适合结构化环境，但成本较高。</li>
+      <li><strong>视觉SLAM</strong>（ORB-SLAM3、VINS-Mono、DSO）：成本低、语义信息丰富，但光照变化或纹理匮乏时退化严重。</li>
+      <li><strong>多传感器融合SLAM</strong>（LVI-SAM、R3LIVE、FAST-LIVO）：综合性能最优，是具身机器人导航的主流方向。</li>
+    </ul>
+    <blockquote>综合项目需求，推荐采用 LIO-SAM（激光+IMU）作为主要SLAM框架，后期引入视觉模态进行融合扩展。</blockquote>
 
-          <blockquote>
-            我们是宇宙认识自身的一种方式。
-          </blockquote>
+    <h2>二、激光SLAM技术调研</h2>
+    <p>激光SLAM利用激光雷达通过ToF测量获取三维点云，核心流程包括点云预处理、特征提取、点云配准、位姿估计和后端优化。不受光照影响，测量精度通常优于5cm。</p>
+    <p>主流算法对比：</p>
+    <ul>
+      <li><strong>LOAM</strong>：CMU 2014年，高频里程计+低频建图，精度优秀，无闭环检测。</li>
+      <li><strong>LeGO-LOAM</strong>：2018年，针对地面机器人优化，可在嵌入式平台实时运行。</li>
+      <li><strong>LIO-SAM</strong>：2020年，激光+IMU紧耦合，因子图优化，支持GPS和闭环，社区最活跃。</li>
+      <li><strong>FAST-LIO2</strong>：港大MARS实验室2022年，基于IEKF+ikd-Tree，计算极低，适合高速平台。</li>
+      <li><strong>Cartographer</strong>：Google 2016年，室内2D建图精度极高。</li>
+    </ul>
 
-          <h2>核心观点</h2>
-          <p>萨根认为，人类对宇宙的探索不仅仅是科学行为，更是一种哲学和精神的追求。我们从哪里来？我们是否孤独？这些问题驱动着人类不断仰望星空。</p>
+    <h2>三、视觉SLAM技术调研</h2>
+    <p>视觉SLAM以相机为主传感器，成本低且信息量大，与目标检测天然耦合，非常适合具身机器人多任务需求。</p>
+    <ul>
+      <li><strong>ORB-SLAM3</strong>：萨拉戈萨大学2020年，支持多地图系统，绝对轨迹误差通常低于2cm，首选框架。</li>
+      <li><strong>VINS-Mono/Fusion</strong>：港科大2018年，单目+IMU紧耦合，无人机领域应用极广。</li>
+      <li><strong>DSO</strong>：TUM 2016年，直接法稀疏里程计，对光照变化非常敏感。</li>
+      <li><strong>ElasticFusion</strong>：帝国理工2015年，RGB-D稠密重建，依赖GPU。</li>
+    </ul>
 
-          <h2>个人感悟</h2>
-          <p>读完这本书，我对自己的渺小有了更深的理解，但同时也感受到了一种奇特的自豪——我们这些由星尘构成的生命，竟然能够理解宇宙的运行规律。</p>
-        `
-      },
-      {
-        id: 'linear-regression',
-        category: '学习笔记',
-        title: '线性回归模型原理',
-        date: '2024-02-15',
-        tags: ['机器学习', 'Python'],
-        excerpt: '线性回归是最基础的机器学习模型之一...',
-        content: `
-          <h2>什么是线性回归</h2>
-          <p>线性回归是一种用于预测连续数值的统计方法。它假设自变量和因变量之间存在线性关系。</p>
+    <h2>四、多传感器融合SLAM</h2>
+    <ul>
+      <li><strong>LVI-SAM</strong>：MIT 2021年，LIO-SAM + VINS-Mono双系统互助，精度与鲁棒性最优。</li>
+      <li><strong>R3LIVE</strong>：港大MARS 2022年，实时输出彩色稠密点云，适合语义场景理解。</li>
+      <li><strong>FAST-LIVO</strong>：港大MARS 2022年，极低计算开销，嵌入式平台友好。</li>
+    </ul>
 
-          <h2>数学原理</h2>
-          <p>基本公式：<code>y = wx + b</code>，其中 w 是权重，b 是偏置。</p>
-          <p>通过最小化损失函数（均方误差）来求解最优参数。</p>
+    <h2>五、技术选型建议</h2>
+    <p><strong>第一阶段</strong>：核心SLAM采用 LIO-SAM（激光+IMU），导航栈用 ROS 2 Nav2，可视化用 RViz2 + Foxglove。</p>
+    <p><strong>第二阶段</strong>：引入 LVI-SAM 或 FAST-LIVO 融合视觉模态，结合 YOLOv8 做动态目标剔除，条件允许时用 R3LIVE 构建稠密地图。</p>
+    <p><strong>硬件建议</strong>：激光雷达选 Livox Mid-360，相机选 Intel RealSense D435i，计算平台选 NVIDIA Jetson AGX Orin。</p>
 
-          <h2>Python 实现</h2>
-          <p>使用 <code>sklearn</code> 库可以快速实现线性回归模型，也可以从零手写梯度下降算法。</p>
-        `
-      },
+    <h2>六、阶段总结</h2>
+    <p>共调研12个主流算法框架，建立多维度评估体系；ROS 2 Humble + Ubuntu 22.04 开发环境已成功搭建，5项核心示例验证通过。</p>
+  `
+},
     ];
     // =================================
 
